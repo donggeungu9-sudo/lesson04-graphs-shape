@@ -164,7 +164,7 @@ try:
       " 관계를 장르별 색상으로 구분하여 살펴봅니다."
   )
 
-  # Plotly 산점도 생성 (x: 개봉일 스크린수, y: 총 관객 수, color: 장르)
+  # Plotly 산점도 생성
   fig_scatter = px.scatter(
       df,
       x="first_scrn",
@@ -176,7 +176,7 @@ try:
           "total_audi": "총 관객 수",
           "genre": "장르",
       },
-      hover_name="movieNm",  # 마우스오버 시 툴팁 상단에 영화명 표시
+      hover_name="movieNm",
       custom_data=["movieNm", "first_scrn", "total_audi", "genre"],
   )
 
@@ -199,6 +199,53 @@ try:
       "• 개봉 초기 확보한 **스크린수**가 많을수록 **총 관객 수**도 비례해서"
       " 증가하는 강한 양의 상관관계를 확인할 수 있습니다.\n• 장르별로 스크린수"
       " 대비 관객 동원력의 차이나 특이점을 비교할 수 있습니다."
+  )
+
+  st.markdown("---")
+
+  # ==========================================
+  # 다섯 번째 그래프: 영화 10편 이상 장르별 총 관객 수 상자 그림
+  # ==========================================
+  st.header("5. 영화 10편 이상 장르별 총 관객 수 상자 그림")
+  st.markdown(
+      "영화 편수가 10편 이상인 주요 장르들을 대상으로, 각 장르의 총 관객 수"
+      " 분포(중앙값, 사분위수 및 특이치)를 상자 그림으로 비교합니다."
+  )
+
+  # 영화가 10편 이상인 장르 필터링
+  genre_counts_series = df["genre"].value_counts()
+  valid_genres = genre_counts_series[genre_counts_series >= 10].index
+  df_box_filtered = df[df["genre"].isin(valid_genres)]
+
+  # Plotly 상자 그림(Box Plot) 생성
+  fig_box = px.box(
+      df_box_filtered,
+      x="genre",
+      y="total_audi",
+      color="genre",
+      title="주요 장르별 총 관객 수 분포 (편수 10편 이상)",
+      labels={"genre": "장르", "total_audi": "총 관객 수"},
+      hover_data=["movieNm"],
+  )
+
+  fig_box.update_traces(
+      hovertemplate=(
+          "<b>장르:</b> %{x}<br><b>총 관객 수:</b> %{y:,}명<br><b>영화명:</b>"
+          " %{customdata[0]}<br><extra></extra>"
+      )
+  )
+
+  # 그래프 출력
+  st.plotly_chart(fig_box, use_container_width=True)
+
+  # '이 그래프로 알 수 있는 것' 구역 (5)
+  st.markdown("---")
+  st.subheader("💡 이 그래프로 알 수 있는 것 (5)")
+  st.info(
+      "• 10편 이상 제작된 주요 장르들 간의 **중앙값 및 흥행 편차**를 비교할"
+      " 수 있습니다.\n• 상자 위쪽으로 튀어나온 이상치(Outlier)에 마우스를"
+      " 올려보면 해당 장르에서 엄청난 흥행을 거둔 **초대박 영화의 이름**을"
+      " 확인할 수 있습니다."
   )
 
 except Exception as e:
