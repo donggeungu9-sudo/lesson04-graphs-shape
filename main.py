@@ -64,16 +64,56 @@ try:
   # 그래프 출력
   st.plotly_chart(fig_genre, use_container_width=True)
 
-  # '이 그래프로 알 수 있는 것' 구역
+  # '이 그래프로 알 수 있는 것' 구역 (1)
   st.markdown("---")
-  st.subheader("💡 이 그래프로 알 수 있는 것")
+  st.subheader("💡 이 그래프로 알 수 있는 것 (1)")
   st.info(
       "• 1년 동안 박스오피스 상위권에 가장 많이 이름을 올린 **주요 인기 장르**가"
       " 무엇인지 파악할 수 있습니다.\n• 전체 영화 중 특정 장르가 차지하는"
       " **상대적인 비중(%)**을 한눈에 비교할 수 있습니다."
   )
 
-  # (추가로 필요한 다른 그래프를 이 아래에 계속해서 확장할 수 있습니다)
+  st.markdown("---")
+
+  # ==========================================
+  # 두 번째 그래프: 장르 내 영화 트리맵 (총 관객 기준)
+  # ==========================================
+  st.header("2. 장르별 개별 영화 총 관객 수 트리맵")
+  st.markdown(
+      "각 장르(상위 그룹) 안에 포함된 개별 영화들을 트리맵으로 표현하고, 칸의"
+      " 면적을 통해 **총 관객 수**의 규모를 비교합니다."
+  )
+
+  # Plotly 트리맵 생성 (path: 장르 -> 영화명, values: 총 관객수)
+  fig_treemap = px.treemap(
+      df,
+      path=["genre", "movieNm"],
+      values="total_audi",
+      title="장르 및 영화별 총 관객 수 분포",
+      custom_data=["movieNm", "total_audi", "genre"],
+  )
+
+  # 마우스 오버 시 정보 설정 (영화명, 장르, 총 관객 수)
+  fig_treemap.update_traces(
+      hovertemplate=(
+          "<b>영화명:</b> %{customdata[0]}<br><b>장르:</b>"
+          " %{customdata[2]}<br><b>총 관객 수:</b>"
+          " %{customdata[1]:,}명<br><extra></extra>"
+      )
+  )
+
+  # 그래프 출력
+  st.plotly_chart(fig_treemap, use_container_width=True)
+
+  # '이 그래프로 알 수 있는 것' 구역 (2)
+  st.markdown("---")
+  st.subheader("💡 이 그래프로 알 수 있는 것 (2)")
+  st.info(
+      "• 각 장르별 전체 흥행 규모와 함께, **어떤 개별 영화가 해당 장르 내에서"
+      " 가장 큰 관객 지분을 차지하고 있는지** 직관적으로 파악할 수 있습니다.\n•"
+      " 장르 간의 전반적인 흥행 파워와 블록버스터 영화들의 분포 관계를"
+      " 한눈에 비교할 수 있습니다."
+  )
 
 except Exception as e:
   st.error(f"데이터를 불러오는 중 오류가 발생했습니다: {e}")
