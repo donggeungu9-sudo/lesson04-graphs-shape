@@ -125,18 +125,14 @@ try:
       " 살펴봅니다."
   )
 
-  # Plotly 히스토그램 생성
+  # Plotly 히스토그램 생성 (hover_data에 영화명을 추가하여 마우스오버 시 표시)
   fig_hist = px.histogram(
       df,
       x="total_audi",
       nbins=20,
       title="총 관객 수 구간별 영화 편수 분포",
       labels={"total_audi": "총 관객 수", "count": "영화 편수"},
-      custom_data=["movieNm"],
-  )
-
-  fig_hist.update_traces(
-      hovertemplate="총 관객 구간: %{x}<br>영화 편수: %{y}<br><extra></extra>"
+      hover_data=["movieNm", "genre"],
   )
 
   # 그래프 출력
@@ -151,9 +147,9 @@ try:
   st.markdown("---")
   st.subheader("💡 이 그래프로 알 수 있는 것 (3)")
   st.info(
-      f"• 대부분의 영화는 0 ~ 저~중관객 구간에 집중적으로 몰려 있으며, 흥행"
-      f" 영화와 일반 영화 간의 관객 수 격차가 뚜렷하게 나타납니다.\n• 본"
-      f" 데이터셋에서 **가장 관객이 많은 영화**는 **'{max_movie_name}'**(약"
+      f"• 대부분의 영화는 저~중관객 구간에 집중적으로 몰려 있으며, 흥행 영화와"
+      f" 일반 영화 간의 관객 수 격차가 뚜렷하게 나타납니다.\n• 본 데이터셋에서"
+      f" **가장 관객이 많은 영화**는 **'{max_movie_name}'**(약"
       f" {max_audi_val:,}명)입니다."
   )
 
