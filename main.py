@@ -125,7 +125,7 @@ try:
       " 살펴봅니다."
   )
 
-  # Plotly 히스토그램 생성 (hover_data에 영화명을 추가하여 마우스오버 시 표시)
+  # Plotly 히스토그램 생성
   fig_hist = px.histogram(
       df,
       x="total_audi",
@@ -151,6 +151,54 @@ try:
       f" 일반 영화 간의 관객 수 격차가 뚜렷하게 나타납니다.\n• 본 데이터셋에서"
       f" **가장 관객이 많은 영화**는 **'{max_movie_name}'**(약"
       f" {max_audi_val:,}명)입니다."
+  )
+
+  st.markdown("---")
+
+  # ==========================================
+  # 네 번째 그래프: 개봉일 스크린수 vs 총 관객 수 산점도
+  # ==========================================
+  st.header("4. 개봉일 스크린수와 총 관객 수 관계 산점도")
+  st.markdown(
+      "영화가 개봉한 날 확보한 **스크린수**와 최종 **총 관객 수** 간의 상관"
+      " 관계를 장르별 색상으로 구분하여 살펴봅니다."
+  )
+
+  # Plotly 산점도 생성 (x: 개봉일 스크린수, y: 총 관객 수, color: 장르)
+  fig_scatter = px.scatter(
+      df,
+      x="first_scrn",
+      y="total_audi",
+      color="genre",
+      title="개봉일 스크린수 vs 총 관객 수 산점도",
+      labels={
+          "first_scrn": "개봉일 스크린수",
+          "total_audi": "총 관객 수",
+          "genre": "장르",
+      },
+      hover_name="movieNm",  # 마우스오버 시 툴팁 상단에 영화명 표시
+      custom_data=["movieNm", "first_scrn", "total_audi", "genre"],
+  )
+
+  fig_scatter.update_traces(
+      hovertemplate=(
+          "<b>영화명:</b> %{customdata[0]}<br><b>장르:</b>"
+          " %{customdata[3]}<br><b>개봉일 스크린수:</b>"
+          " %{customdata[1]:,}개<br><b>총 관객 수:</b>"
+          " %{customdata[2]:,}명<br><extra></extra>"
+      )
+  )
+
+  # 그래프 출력
+  st.plotly_chart(fig_scatter, use_container_width=True)
+
+  # '이 그래프로 알 수 있는 것' 구역 (4)
+  st.markdown("---")
+  st.subheader("💡 이 그래프로 알 수 있는 것 (4)")
+  st.info(
+      "• 개봉 초기 확보한 **스크린수**가 많을수록 **총 관객 수**도 비례해서"
+      " 증가하는 강한 양의 상관관계를 확인할 수 있습니다.\n• 장르별로 스크린수"
+      " 대비 관객 동원력의 차이나 특이점을 비교할 수 있습니다."
   )
 
 except Exception as e:
