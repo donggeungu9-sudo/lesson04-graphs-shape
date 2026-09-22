@@ -84,7 +84,7 @@ try:
       " 면적을 통해 **총 관객 수**의 규모를 비교합니다."
   )
 
-  # Plotly 트리맵 생성 (path: 장르 -> 영화명, values: 총 관객수)
+  # Plotly 트리맵 생성
   fig_treemap = px.treemap(
       df,
       path=["genre", "movieNm"],
@@ -93,7 +93,6 @@ try:
       custom_data=["movieNm", "total_audi", "genre"],
   )
 
-  # 마우스 오버 시 정보 설정 (영화명, 장르, 총 관객 수)
   fig_treemap.update_traces(
       hovertemplate=(
           "<b>영화명:</b> %{customdata[0]}<br><b>장르:</b>"
@@ -113,6 +112,49 @@ try:
       " 가장 큰 관객 지분을 차지하고 있는지** 직관적으로 파악할 수 있습니다.\n•"
       " 장르 간의 전반적인 흥행 파워와 블록버스터 영화들의 분포 관계를"
       " 한눈에 비교할 수 있습니다."
+  )
+
+  st.markdown("---")
+
+  # ==========================================
+  # 세 번째 그래프: 총 관객 수 히스토그램
+  # ==========================================
+  st.header("3. 총 관객 수 분포 히스토그램")
+  st.markdown(
+      "영화별 총 관객 수의 전체적인 분포 형태와 빈도수를 히스토그램으로"
+      " 살펴봅니다."
+  )
+
+  # Plotly 히스토그램 생성
+  fig_hist = px.histogram(
+      df,
+      x="total_audi",
+      nbins=20,
+      title="총 관객 수 구간별 영화 편수 분포",
+      labels={"total_audi": "총 관객 수", "count": "영화 편수"},
+      custom_data=["movieNm"],
+  )
+
+  fig_hist.update_traces(
+      hovertemplate="총 관객 구간: %{x}<br>영화 편수: %{y}<br><extra></extra>"
+  )
+
+  # 그래프 출력
+  st.plotly_chart(fig_hist, use_container_width=True)
+
+  # 데이터 분석 자동화 (가장 관객이 많은 영화 찾기)
+  max_audi_row = df.loc[df["total_audi"].idxmax()]
+  max_movie_name = max_audi_row["movieNm"]
+  max_audi_val = max_audi_row["total_audi"]
+
+  # '이 그래프로 알 수 있는 것' 구역 (3)
+  st.markdown("---")
+  st.subheader("💡 이 그래프로 알 수 있는 것 (3)")
+  st.info(
+      f"• 대부분의 영화는 0 ~ 저~중관객 구간에 집중적으로 몰려 있으며, 흥행"
+      f" 영화와 일반 영화 간의 관객 수 격차가 뚜렷하게 나타납니다.\n• 본"
+      f" 데이터셋에서 **가장 관객이 많은 영화**는 **'{max_movie_name}'**(약"
+      f" {max_audi_val:,}명)입니다."
   )
 
 except Exception as e:
