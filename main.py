@@ -320,7 +320,7 @@ try:
       " 표현하며, 각 조각의 면적은 **영화 편수**를 나타냅니다."
   )
 
-  # Plotly 선버스트 그래프 생성 (path: nation -> genre, 각 항목의 개수 count를 크기로 활용)
+  # Plotly 선버스트 그래프 생성
   fig_sunburst = px.sunburst(
       df,
       path=["nation", "genre"],
@@ -342,6 +342,44 @@ try:
       " 큰 비중을 차지하는지 다단계 계층으로 파악할 수 있습니다.\n• 국내"
       " 영화와 해외 영화 간의 장르적 분포 차이를 직관적으로 비교할 수"
       " 있습니다."
+  )
+
+  st.markdown("---")
+
+  # ==========================================
+  # 여덟 번째 그래프: 제작 국가별 영화 편수 비율 도넛 그래프
+  # ==========================================
+  st.header("8. 제작 국가별 영화 편수 비율 도넛 그래프")
+  st.markdown(
+      "전체 영화 중 각 **제작 국가(`nation`)**가 차지하는 편수와 상대적인"
+      " 비율을 도넛 형태의 그래프로 살펴봅니다."
+  )
+
+  # 제작 국가별 편수 집계
+  nation_counts = df["nation"].value_counts().reset_index()
+  nation_counts.columns = ["nation", "count"]
+
+  # Plotly 도넛 그래프 생성
+  fig_nation = px.pie(
+      nation_counts,
+      names="nation",
+      values="count",
+      hole=0.4,  # 도넛 모양 생성
+      title="제작 국가별 영화 편수 비율",
+  )
+  fig_nation.update_traces(
+      textinfo="percent+label", hoverinfo="label+value+percent"
+  )
+
+  # 그래프 출력
+  st.plotly_chart(fig_nation, use_container_width=True)
+
+  # '이 그래프로 알 수 있는 것' 구역 (8)
+  st.markdown("---")
+  st.subheader("💡 이 그래프로 알 수 있는 것 (8)")
+  st.info(
+      "• 박스오피스 상위권에 진입한 영화들 중 **국내 제작 영화와 해외 제작"
+      " 영화의 점유율 및 편수 비중**을 한눈에 비교할 수 있습니다."
   )
 
 except Exception as e:
