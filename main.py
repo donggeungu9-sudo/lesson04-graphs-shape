@@ -21,7 +21,6 @@ st.markdown("---")
 # 데이터 불러오기 및 전처리 함수
 @st.cache_data
 def load_data():
-  # URL 주소 변경 반영
   url = "https://raw.githubusercontent.com/happykth/data/main/kobis_movies.csv"
   df = pd.read_csv(url)
 
@@ -307,6 +306,41 @@ try:
       " 관객 수)**를 통해 개봉 초기 화력과 최종 흥행 성과의 연관성을 입체적으로"
       " 파악할 수 있습니다.\n• 초기 스크린수에 비해 첫 주 관객 버블이 유독"
       " 크거나 작은 영화들을 찾아내어 흥행 추이의 특이점을 발견할 수"
+      " 있습니다."
+  )
+
+  st.markdown("---")
+
+  # ==========================================
+  # 일곱 번째 그래프: 제작 국가 -> 장르 선버스트 그래프 (영화 편수 기준)
+  # ==========================================
+  st.header("7. 제작 국가 및 장르별 선버스트 그래프")
+  st.markdown(
+      "안쪽의 **제작 국가**에서 바깥쪽의 **장르**로 이어지는 계층 구조를"
+      " 표현하며, 각 조각의 면적은 **영화 편수**를 나타냅니다."
+  )
+
+  # Plotly 선버스트 그래프 생성 (path: nation -> genre, 각 항목의 개수 count를 크기로 활용)
+  fig_sunburst = px.sunburst(
+      df,
+      path=["nation", "genre"],
+      title="제작 국가에서 장르로 이어지는 영화 편수 계층 구조",
+  )
+
+  fig_sunburst.update_traces(
+      hovertemplate="<b>계층 경로:</b> %{id}<br><b>영화 편수:</b> %{value}편<br><extra></extra>"
+  )
+
+  # 그래프 출력
+  st.plotly_chart(fig_sunburst, use_container_width=True)
+
+  # '이 그래프로 알 수 있는 것' 구역 (7)
+  st.markdown("---")
+  st.subheader("💡 이 그래프로 알 수 있는 것 (7)")
+  st.info(
+      "• 제작 국가별 전체 영화 편수 규모와, 해당 국가 내에서 어떤 **장르**가"
+      " 큰 비중을 차지하는지 다단계 계층으로 파악할 수 있습니다.\n• 국내"
+      " 영화와 해외 영화 간의 장르적 분포 차이를 직관적으로 비교할 수"
       " 있습니다."
   )
 
