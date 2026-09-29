@@ -21,6 +21,7 @@ st.markdown("---")
 # 데이터 불러오기 및 전처리 함수
 @st.cache_data
 def load_data():
+  # URL 주소 변경 반영
   url = "https://raw.githubusercontent.com/happykth/data/main/kobis_movies.csv"
   df = pd.read_csv(url)
 
@@ -217,7 +218,7 @@ try:
   valid_genres = genre_counts_series[genre_counts_series >= 10].index
   df_box_filtered = df[df["genre"].isin(valid_genres)]
 
-  # Plotly 상자 그림(Box Plot) 생성
+  # Plotly 상자 그림 생성
   fig_box = px.box(
       df_box_filtered,
       x="genre",
@@ -246,6 +247,67 @@ try:
       " 수 있습니다.\n• 상자 위쪽으로 튀어나온 이상치(Outlier)에 마우스를"
       " 올려보면 해당 장르에서 엄청난 흥행을 거둔 **초대박 영화의 이름**을"
       " 확인할 수 있습니다."
+  )
+
+  st.markdown("---")
+
+  # ==========================================
+  # 여섯 번째 그래프: 개봉일 스크린수 vs 총 관객 수 버블 그래프 (첫 주 관객 크기 반영)
+  # ==========================================
+  st.header("6. 스크린수-총 관객 수 버블 그래프 (첫 주 관객 규모 반영)")
+  st.markdown(
+      "네 번째 산점도를 바탕으로, 점의 **크기**를 **첫 주 관객 수(`first_week_audi`)**로"
+      " 표현하여 초반 흥행 규모까지 동시에 비교할 수 있는 버블 그래프를"
+      " 그립니다."
+  )
+
+  # Plotly 버블 그래프 생성
+  fig_bubble = px.scatter(
+      df,
+      x="first_scrn",
+      y="total_audi",
+      size="first_week_audi",
+      color="genre",
+      title="개봉일 스크린수 vs 총 관객 수 (버블 크기: 첫 주 관객)",
+      labels={
+          "first_scrn": "개봉일 스크린수",
+          "total_audi": "총 관객 수",
+          "first_week_audi": "첫 주 관객",
+          "genre": "장르",
+      },
+      hover_name="movieNm",
+      custom_data=[
+          "movieNm",
+          "first_scrn",
+          "total_audi",
+          "first_week_audi",
+          "genre",
+      ],
+      size_max=60,
+  )
+
+  fig_bubble.update_traces(
+      hovertemplate=(
+          "<b>영화명:</b> %{customdata[0]}<br><b>장르:</b>"
+          " %{customdata[4]}<br><b>개봉일 스크린수:</b>"
+          " %{customdata[1]:,}개<br><b>총 관객 수:</b>"
+          " %{customdata[2]:,}명<br><b>첫 주 관객 수:</b>"
+          " %{customdata[3]:,}명<br><extra></extra>"
+      )
+  )
+
+  # 그래프 출력
+  st.plotly_chart(fig_bubble, use_container_width=True)
+
+  # '이 그래프로 알 수 있는 것' 구역 (6)
+  st.markdown("---")
+  st.subheader("💡 이 그래프로 알 수 있는 것 (6)")
+  st.info(
+      "• 스크린수와 총 관객 수의 비례 관계뿐만 아니라, **버블의 크기(첫 주"
+      " 관객 수)**를 통해 개봉 초기 화력과 최종 흥행 성과의 연관성을 입체적으로"
+      " 파악할 수 있습니다.\n• 초기 스크린수에 비해 첫 주 관객 버블이 유독"
+      " 크거나 작은 영화들을 찾아내어 흥행 추이의 특이점을 발견할 수"
+      " 있습니다."
   )
 
 except Exception as e:
